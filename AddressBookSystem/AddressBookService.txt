@@ -232,3 +232,197 @@ mysql> select * from address_book;
 |   7 | Friends | Sambit     | Sen       | 15,SPR     | Kolkata   | West_Bengal | 700002 |   8956237410 | sen.sambit@gmail.com    |
 +-----+---------+------------+-----------+------------+-----------+-------------+--------+--------------+-------------------------+
 6 rows in set (0.08 sec)
+
+#UC12:
+
+create table relation_type(
+Type_Id int not null,
+Type varchar(50) not null,
+primary key(Type)
+);
+
+insert into relation_type
+(Type_Id,Type)
+ values
+ (1,"Family"),
+ (2,"Friends");
+ 
+mysql> select * from relation_type;
++---------+---------+
+| Type_Id | Type    |
++---------+---------+
+|       1 | Family  |
+|       2 | Friends |
++---------+---------+
+2 rows in set (1.41 sec)
+
+alter table address_book add foreign key(Type) references relation_type(Type);
+
+mysql> SELECT * FROM address_book inner join relation_type on address_book.Type = relation_type.Type\G;
+*************************** 1. row ***************************
+         SNo: 1
+        Type: Family
+  First_Name: Sudip
+   Last_Name: Panja
+     Address: 1/A/7
+        City: Kolkata
+       State: West_Bengal
+         Zip: 700050
+Phone_Number: 8910211371
+       Email: panja370@gmail.com
+     Type_Id: 1
+        Type: Family
+*************************** 2. row ***************************
+         SNo: 2
+        Type: Family
+  First_Name: Amiya
+   Last_Name: Sarkar
+     Address: 24,APG
+        City: Bangalore
+       State: Karnataka
+         Zip: 560004
+Phone_Number: 9038521669
+       Email: sarkar.amiya@gmail.com
+     Type_Id: 1
+        Type: Family
+*************************** 3. row ***************************
+         SNo: 4
+        Type: Friends
+  First_Name: Rohit
+   Last_Name: Sinha
+     Address: Elgin_Road
+        City: Bangalore
+       State: Karnataka
+         Zip: 400001
+Phone_Number: 8334003795
+       Email: sinha.rohit12@gmail.com
+     Type_Id: 2
+        Type: Friends
+*************************** 4. row ***************************
+         SNo: 5
+        Type: Friends
+  First_Name: Rahul
+   Last_Name: Singh
+     Address: Salt_Lake
+        City: Kolkata
+       State: West_Bengal
+         Zip: 700056
+Phone_Number: 9433772081
+       Email: singh.rahul@gmail.com
+     Type_Id: 2
+        Type: Friends
+*************************** 5. row ***************************
+         SNo: 6
+        Type: Family
+  First_Name: Rimpa
+   Last_Name: Sarkar
+     Address: 24,APG
+        City: Bangalore
+       State: Karnataka
+         Zip: 500061
+Phone_Number: 798021134
+       Email: sarkar.rimpa@gmail.com
+     Type_Id: 1
+        Type: Family
+*************************** 6. row ***************************
+         SNo: 7
+        Type: Friends
+  First_Name: Sambit
+   Last_Name: Sen
+     Address: 15,SPR
+        City: Kolkata
+       State: West_Bengal
+         Zip: 700002
+Phone_Number: 8956237410
+       Email: sen.sambit@gmail.com
+     Type_Id: 2
+        Type: Friends
+6 rows in set (0.00 sec)
+
+ERROR:
+No query specified
+
+#UC13 :
+
+mysql> SELECT * FROM address_book ad inner join relation_type rt on ad.Type = rt.Type where ad.City = "Kolkata" or ad.State = "West_Bengal"\G;
+*************************** 1. row ***************************
+         SNo: 1
+        Type: Family
+  First_Name: Sudip
+   Last_Name: Panja
+     Address: 1/A/7
+        City: Kolkata
+       State: West_Bengal
+         Zip: 700050
+Phone_Number: 8910211371
+       Email: panja370@gmail.com
+     Type_Id: 1
+        Type: Family
+*************************** 2. row ***************************
+         SNo: 7
+        Type: Friends
+  First_Name: Sambit
+   Last_Name: Sen
+     Address: 15,SPR
+        City: Kolkata
+       State: West_Bengal
+         Zip: 700002
+Phone_Number: 8956237410
+       Email: sen.sambit@gmail.com
+     Type_Id: 2
+        Type: Friends
+*************************** 3. row ***************************
+         SNo: 5
+        Type: Friends
+  First_Name: Rahul
+   Last_Name: Singh
+     Address: Salt_Lake
+        City: Kolkata
+       State: West_Bengal
+         Zip: 700056
+Phone_Number: 9433772081
+       Email: singh.rahul@gmail.com
+     Type_Id: 2
+        Type: Friends
+3 rows in set (0.00 sec)
+
+mysql> select City,count(*) from address_book ad inner join relation_type rt on ad.Type = rt.Type group by ad.City;
++-----------+----------+
+| City      | count(*) |
++-----------+----------+
+| Kolkata   |        3 |
+| Bangalore |        3 |
++-----------+----------+
+2 rows in set (0.00 sec)
+
+mysql> select State,count(*) from address_book ad inner join relation_type rt on ad.Type = rt.Type group by ad.State;
++-------------+----------+
+| State       | count(*) |
++-------------+----------+
+| West_Bengal |        3 |
+| Karnataka   |        3 |
++-------------+----------+
+2 rows in set (0.00 sec)
+
+mysql> select * from address_book ad inner join relation_type rt on ad.Type = rt.Type order by ad.First_Name;
++-----+---------+------------+-----------+------------+-----------+-------------+--------+--------------+-------------------------+---------+---------+
+| SNo | Type    | First_Name | Last_Name | Address    | City      | State       | Zip    | Phone_Number | Email                   | Type_Id | Type    |
++-----+---------+------------+-----------+------------+-----------+-------------+--------+--------------+-------------------------+---------+---------+
+|   2 | Family  | Amiya      | Sarkar    | 24,APG     | Bangalore | Karnataka   | 560004 |   9038521669 | sarkar.amiya@gmail.com  |       1 | Family  |
+|   5 | Friends | Rahul      | Singh     | Salt_Lake  | Kolkata   | West_Bengal | 700056 |   9433772081 | singh.rahul@gmail.com   |       2 | Friends |
+|   6 | Family  | Rimpa      | Sarkar    | 24,APG     | Bangalore | Karnataka   | 500061 |    798021134 | sarkar.rimpa@gmail.com  |       1 | Family  |
+|   4 | Friends | Rohit      | Sinha     | Elgin_Road | Bangalore | Karnataka   | 400001 |   8334003795 | sinha.rohit12@gmail.com |       2 | Friends |
+|   7 | Friends | Sambit     | Sen       | 15,SPR     | Kolkata   | West_Bengal | 700002 |   8956237410 | sen.sambit@gmail.com    |       2 | Friends |
+|   1 | Family  | Sudip      | Panja     | 1/A/7      | Kolkata   | West_Bengal | 700050 |   8910211371 | panja370@gmail.com      |       1 | Family  |
++-----+---------+------------+-----------+------------+-----------+-------------+--------+--------------+-------------------------+---------+---------+
+6 rows in set (0.00 sec)
+
+mysql> select ad.Type,count(*) from address_book ad inner join relation_type rt on ad.Type = rt.Type group by Type;
++---------+----------+
+| Type    | count(*) |
++---------+----------+
+| Family  |        3 |
+| Friends |        3 |
++---------+----------+
+2 rows in set (0.00 sec)
+
